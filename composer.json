@@ -1,0 +1,12 @@
+{
+    "name": "osmscripts/hosts",
+    "autoload": {
+        "psr-4": {
+            "Osmscripts\\Hosts\\": "src/"
+        }
+    },
+    "require": {
+        "php": "^7.2",
+        "osmscripts/core": "^1.3"
+    }
+}
