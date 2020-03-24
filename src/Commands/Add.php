@@ -48,20 +48,22 @@ class Add extends Command
                 "IP address")
             ->addArgument('host', InputArgument::REQUIRED,
                 "Host name");
-
     }
 
     protected function handle() {
-        $this->files->save($this->filename, $this->editor->edit($this->contents, function() {
-            $entry = "{$this->ip} {$this->host}\n";
+        if ($this->find($this->host)) {
+            throw new \Exception("'hosts' file already has an entry for '{$this->host}' host");
+        }
 
-            if ($this->end_pos !== false) {
-                $this->editor->insertBefore($this->end_pos, $entry);
+        $this->files->save($this->filename, $this->editor->edit($this->contents, function() {
+            if (($pos = $this->editor->last($this->end_marker)) !== false) {
+                $this->editor->insertBefore($pos, "{$this->ip} {$this->host}\n");
             }
             else {
                 $this->editor->add(<<<EOT
+
 {$this->start_marker}
-{$entry}
+{$this->ip} {$this->host}
 {$this->end_marker}
 
 EOT

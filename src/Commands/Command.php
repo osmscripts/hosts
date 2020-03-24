@@ -3,16 +3,18 @@
 namespace OsmScripts\Hosts\Commands;
 
 use OsmScripts\Core\Command as BaseCommand;
+use OsmScripts\Hosts\Hints\EntryHint;
 
 /**
  * @property string $filename
  * @property string $contents
  * @property string[] $lines
- * @property int|false $start_pos
- * @property int|false $end_pos
+ * @property object[]|EntryHint[] $entries
  */
 class Command extends BaseCommand
 {
+    const PATTERN = '/(?<ip>\d{1,3}(?:\.\d{1,3}))\s(?<host>\w+(?:\.\w+)*)/';
+
     public $start_marker = "# Entries managed with `hosts` shell command:";
     public $end_marker = "# End of entries managed with `hosts` shell command";
 
@@ -22,8 +24,7 @@ class Command extends BaseCommand
             case 'filename': return $this->getFilename();
             case 'contents': return file_get_contents($this->filename);
             case 'lines': return file($this->filename);
-            case 'start_pos': return $this->getMarkerPos($this->start_marker);
-            case 'end_pos': return $this->getMarkerPos($this->end_marker);
+            case 'entries': return $this->getEntries();
         }
 
         return parent::default($property);
@@ -35,15 +36,34 @@ class Command extends BaseCommand
             : 'etc/hosts';
     }
 
-    protected function getMarkerPos($marker) {
-        if (!preg_match('/[\r\n]?(?<marker>' . preg_quote($marker). ')\w[\r\n]?/',
-            $this->contents, $match, PREG_OFFSET_CAPTURE))
-        {
-            return false;
+    protected function getEntries() {
+        $result = [];
+
+        foreach ($this->lines as $index => $line) {
+            if (!preg_match(static::PATTERN, $line, $match)) {
+                continue;
+            }
+
+            $result[] = (object)[
+                'ip' => $match['ip'],
+                'host' => $match['host'],
+                'line' => $index,
+            ];
         }
 
-        return $match['marker'][1];
+        return $result;
     }
     #endregion
 
+    protected function find($host) {
+        $result = [];
+
+        foreach ($this->entries as $entry) {
+            if ($entry->host == $host) {
+                $result[] = $entry;
+            }
+        }
+
+        return count($result) ? $result : null;
+    }
 }

@@ -2,8 +2,6 @@
 
 namespace OsmScripts\Hosts\Commands;
 
-use OsmScripts\Core\Script;
-
 /** @noinspection PhpUnused */
 
 /**
@@ -13,23 +11,11 @@ use OsmScripts\Core\Script;
  */
 class Show extends Command
 {
-    #region Properties
-    public function default($property) {
-        /* @var Script $script */
-        global $script;
-
-        switch ($property) {
-        }
-
-        return parent::default($property);
-    }
-    #endregion
-
     protected function configure() {
-        // TODO: describe the command usage, arguments and options
+        $this->setDescription("Outputs local DNS entries from the 'hosts' file");
     }
 
     protected function handle() {
-        // TODO: execute command logic
+        $this->output->writeln($this->contents);
     }
 }
