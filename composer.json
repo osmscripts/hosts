@@ -2,7 +2,7 @@
     "name": "osmscripts\/hosts",
     "autoload": {
         "psr-4": {
-            "Osmscripts\\Hosts\\": "src\/"
+            "OsmScripts\\Hosts\\": "src\/"
         }
     },
     "require": {

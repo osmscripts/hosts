@@ -1,0 +1,9 @@
+{
+    "hosts": {
+        "commands": {
+            "add": "OsmScripts\\Hosts\\Commands\\Add",
+            "show": "OsmScripts\\Hosts\\Commands\\Show",
+            "remove": "OsmScripts\\Hosts\\Commands\\Remove"
+        }
+    }
+}
